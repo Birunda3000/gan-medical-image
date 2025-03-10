@@ -1,6 +1,7 @@
 import tensorflow as tf
 from tensorflow.keras import layers
 
+'''
 def make_discriminator_model(num_of_labels=10):
     # Input para a imagem
     image_input = layers.Input(shape=(28, 28, 1), name="image_input")
@@ -55,17 +56,11 @@ def make_discriminator_model(num_of_labels=10):
     # Define o modelo com os dois inputs e uma saída
     model = tf.keras.Model(inputs=[image_input, label_input], outputs=output)
     return model
+'''
 
 
 
-
-
-
-
-
-
-
-'''def make_discriminator_model(num_of_labels=10):
+def make_discriminator_model(num_of_labels=10):
     # Input para a imagem
     image_input = layers.Input(shape=(28, 28, 1), name="image_input")
     # Input para o vetor one-hot com 2 classes
@@ -84,27 +79,22 @@ def make_discriminator_model(num_of_labels=10):
 
     # Parte densa do discriminador para extração de features
     x = layers.Dense(128, activation='relu')(x)
-    x = layers.Dense(64, activation='relu')(x)
     x = layers.Dense(32, activation='relu')(x)
-
-
-    features = layers.Dense(16, activation='tanh')(x)  # Vetor de features com dimensão 16    
-    features = layers.BatchNormalization()(features)
+    x = layers.BatchNormalization()(x)
+    features = layers.Dense(16, activation='tanh')(x)  # Vetor de features com dimensão 16
 
     # Separar as features em dois grupos:
-    # - x_incond: características que não serão moduladas (primeiros 6 neurônios)
-    # - x_cond: características que serão combinadas com o rótulo (últimos 10 neurônios)
-    x_incond = layers.Lambda(lambda z: z[:, :6])(features)
-    x_cond = layers.Lambda(lambda z: z[:, 6:])(features)
+    # - x_incond: características que não serão moduladas (primeiros 8 neurônios)
+    # - x_cond: características que serão combinadas com o rótulo (últimos 8 neurônios)
+    x_incond = layers.Lambda(lambda z: z[:, :8])(features)
+    x_cond = layers.Lambda(lambda z: z[:, 8:])(features)
 
-    # Cria um embedding para o rótulo, mapeando o vetor one-hot para dimensão 10
-    label_embedding = layers.Dense(10, activation='tanh')(label_input)
-
+    # Cria um embedding para o rótulo, mapeando o vetor one-hot para dimensão 8
+    label_embedding = layers.Dense(8, activation='tanh')(label_input)
 
     # Calcula o produto escalar entre as features condicionais e o embedding do rótulo
     dot_product = layers.Dot(axes=1)([x_cond, label_embedding])
     # O resultado tem dimensão (batch_size, 1)
-
 
     # Combina as features incondicionais, condicionais e o valor do produto escalar
     concatenated = layers.Concatenate()([x_incond, x_cond, dot_product])
@@ -115,7 +105,7 @@ def make_discriminator_model(num_of_labels=10):
 
     # Define o modelo com os dois inputs e uma saída
     model = tf.keras.Model(inputs=[image_input, label_input], outputs=output)
-    return model'''
+    return model
 
 
 

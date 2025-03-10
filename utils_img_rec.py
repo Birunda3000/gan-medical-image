@@ -2,6 +2,7 @@ import random
 import numpy as np
 import cv2
 import os
+import PIL
 
 import tensorflow as tf
 import matplotlib.pyplot as plt
@@ -204,11 +205,17 @@ def generate_and_save_images(model, epoch, test_input, outpath):
         plt.subplot(4, 4, i+1)
         plt.imshow(predictions[i, :, :, 0] * 127.5 + 127.5, cmap='gray')
         plt.axis('off')
-        #plt.title(f'Classe {test_input[i][100]} {test_input[i][101]}', fontsize=6)
         plt.title(f'Classe {np.argmax(test_input[i][-10:])}', fontsize=6)
 
     # Ajusta o espaçamento entre os subplots
     plt.subplots_adjust(wspace=0.3, hspace=0.3)
 
-    plt.savefig(outpath+'image_at_epoch_{:04d}.png'.format(epoch))
+    plt.savefig(outpath / f'image_at_epoch_{epoch:04d}.png')
     plt.show()
+
+
+
+
+# Display a single image using the epoch number
+def display_image(epoch_no, out_path):
+  return PIL.Image.open(out_path / f'image_at_epoch_{epoch_no:04d}.png')

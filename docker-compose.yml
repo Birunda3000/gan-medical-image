@@ -1,0 +1,32 @@
+version: '3.8' # Versão da sintaxe do Docker Compose
+
+services:
+  # Define um serviço chamado 'jupyter_gan'. Este será o nome que você usará para referenciar seu ambiente.
+  jupyter_gan:
+    # Instrução para construir a imagem Docker a partir do Dockerfile que está no diretório atual ('.')
+    build: .
+    # Nome amigável para o container que será criado a partir deste serviço.
+    # Isso facilita identificar o container quando você usa 'docker ps' ou 'docker stop'.
+    container_name: my_tcc_gan_jupyter_compose
+    # Habilita o runtime da NVIDIA, essencial para que o container possa usar sua GPU.
+    runtime: nvidia
+    # Mapeia as portas do host (sua máquina Windows) para as portas do container.
+    # "8888:8888" significa que a porta 8888 do seu Windows será redirecionada para a porta 8888 do container.
+    # É por aqui que você acessará o Jupyter Lab no navegador.
+    ports:
+      - "8888:8888"
+    # Mapeia os volumes (pastas) entre o host (sua máquina Windows/WSL2) e o container.
+    volumes:
+      # Mapeia o diretório atual do host (onde está o docker-compose.yml e seu código Git) para o WORKDIR no container.
+      # Qualquer alteração que você fizer no seu código no VS Code no Windows será vista instantaneamente no container.
+      - .:/tf/TCC_GAN
+      # Mapeia a pasta de dados brutos e de saída no Windows para dentro do container.
+      # **ATENÇÃO CRÍTICA AQUI:** Substitua 'C:\Users\esdn6\Documents\data' pelo caminho EXATO da sua pasta de dados no Windows.
+      # Esta pasta será acessível como '/tf/data_project' dentro do container.
+      - /mnt/c/Users/esdn6/Documents/data:/tf/data_project 
+    # Define o diretório de trabalho inicial dentro do container para este serviço.
+    # O Jupyter Lab iniciará diretamente nesta pasta.
+    working_dir: /tf/TCC_GAN
+    # Comando que será executado quando o serviço 'jupyter_gan' for iniciado.
+    # Isso garante que o Jupyter Lab comece automaticamente quando o container for ligado.
+    command: jupyter lab --port=8888 --no-browser --allow-root --ip=0.0.0.0

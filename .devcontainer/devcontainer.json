@@ -1,12 +1,27 @@
 {
-    "name": "TCC GAN Development",
-    "dockerComposeFile": "../docker-compose.yml", // Path to your docker-compose.yml
-    "service": "jupyter_gan", // Name of the service in docker-compose.yml
-    "workspaceFolder": "/tf/TCC_GAN", // Your working directory inside the container
-    "shutdownAction": "stopCompose", // Action to take when closing VS Code
-    "extensions": [
-        "ms-python.python", // Extensão Python
-        "ms-toolsai.jupyter" // Extensão Jupyter
-    ],
-    "remoteUser": "root" // Default user inside the container (usually root for NVIDIA images)
+    "name": "TCC GAN Development Environment", // Nome que aparecerá no VS Code
+    "dockerComposeFile": "../docker-compose.yml", // Caminho do seu docker-compose.yml em relação à pasta .devcontainer
+    "service": "jupyter_gan", // O nome do serviço que você definiu no docker-compose.yml (jupyter_gan)
+    "workspaceFolder": "/tf/TCC_GAN", // O diretório que o VS Code vai abrir dentro do container
+    "shutdownAction": "stopCompose", // O que fazer ao fechar o VS Code (parar o serviço Docker Compose)
+    "remoteUser": "root", // O usuário padrão dentro do container (geralmente 'root' para imagens da NVIDIA)
+    // Opcional: Adicione configurações específicas do VS Code aqui se quiser que elas se apliquem apenas a este ambiente
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "ms-python.python", // Extensão Python da Microsoft (essencial para Python no VS Code)
+                "ms-toolsai.jupyter" // Extensão Jupyter da Microsoft (para notebooks .ipynb no VS Code)
+            ],
+            "settings": {
+                "python.defaultInterpreterPath": "/usr/bin/python", // Caminho do interpretador Python dentro do container
+                "jupyter.jupyterServerType": "local", // Configuração para usar o servidor Jupyter local
+                "jupyter.enableNotebookAutoSave": true, // Habilita o salvamento automático de notebooks
+                "jupyter.sendSelectionToInteractiveWindow": true, // Habilita o envio de seleção para a janela interativa
+                "jupyter.interactiveWindowMode": "perFile", // Modo de janela interativa por arquivo
+                "jupyter.interactiveWindowShowCode": true, // Exibe o código na janela interativa
+                "jupyter.interactiveWindowShowVariableExplorer": true, // Exibe o explorador de variáveis na janela interativa
+                "jupyter.interactiveWindowShowDataExplorer": true // Exibe o explorador de dados na janela interativa
+            }
+        }
+    }
 }

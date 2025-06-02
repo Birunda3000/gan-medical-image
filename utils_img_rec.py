@@ -33,6 +33,25 @@ def get_classes(matriz) -> list:
     return res
 
 
+def get_classes_plus_index(matriz) -> dict:
+    """
+    Extracts unique classes from the given matrix and returns a dictionary mapping each class to its index.
+
+    Parameters:
+    matriz (list): A list of lists where the third element of each sublist is a class label.
+
+    Returns:
+    dict: A dictionary where keys are unique class labels and values are their corresponding indices.
+    """
+    res = {}
+    for sample in matriz:
+        class_name = sample[2]
+        if class_name not in res:
+            res[class_name] = sample[1]
+    return res
+            
+
+
 def prep_data(data, CATEGORIES, IMG_SIZE, num_of_channels, shuffle=True) -> tuple:
     """
     Prepares data for training by shuffling, extracting features and labels, and reshaping.

@@ -1,32 +1,38 @@
-version: '3.8' # Versão da sintaxe do Docker Compose
+version: '3.8' # Versão da sintaxe do Docker Compose. (Warning: Copilot note about 'version' being obsolete can be ignored, it's common practice).
 
 services:
-  # Define um serviço chamado 'jupyter_gan'. Este será o nome que você usará para referenciar seu ambiente.
+  # Define o serviço principal do seu ambiente de desenvolvimento.
   jupyter_gan:
-    # Instrução para construir a imagem Docker a partir do Dockerfile que está no diretório atual ('.')
+    # Constrói a imagem Docker a partir do Dockerfile localizado no diretório atual.
     build: .
-    # Nome amigável para o container que será criado a partir deste serviço.
-    # Isso facilita identificar o container quando você usa 'docker ps' ou 'docker stop'.
-    container_name: my_tcc_gan_jupyter_compose
-    # Habilita o runtime da NVIDIA, essencial para que o container possa usar sua GPU.
+    # Nome amigável para o container. Facilita o gerenciamento via 'docker ps'.
+    container_name: my_tcc_gan_dev_container
+    # Habilita o runtime da NVIDIA, permitindo acesso e otimização da GPU.
     runtime: nvidia
-    # Mapeia as portas do host (sua máquina Windows) para as portas do container.
-    # "8888:8888" significa que a porta 8888 do seu Windows será redirecionada para a porta 8888 do container.
-    # É por aqui que você acessará o Jupyter Lab no navegador.
+    # Mapeia portas do host para o container.
+    # Mantemos a porta 8888 mapeada, mesmo que não use o Jupyter Lab via navegador,
+    # para flexibilidade futura ou depuração via navegador.
     ports:
       - "8888:8888"
-    # Mapeia os volumes (pastas) entre o host (sua máquina Windows/WSL2) e o container.
+    # Variáveis de ambiente definidas dentro do container.
+    # Silencia mensagens INFO do TensorFlow C++ para uma saída mais limpa.
+    environment:
+      - TF_CPP_MIN_LOG_LEVEL=2
+    # Mapeia volumes (pastas) entre o host (Windows/WSL2) e o container.
     volumes:
-      # Mapeia o diretório atual do host (onde está o docker-compose.yml e seu código Git) para o WORKDIR no container.
-      # Qualquer alteração que você fizer no seu código no VS Code no Windows será vista instantaneamente no container.
+      # Mapeia o diretório atual do seu repositório Git (no host) para o diretório de trabalho no container.
+      # Permite edição de código em tempo real no VS Code.
       - .:/tf/TCC_GAN
-      # Mapeia a pasta de dados brutos e de saída no Windows para dentro do container.
-      # **ATENÇÃO CRÍTICA AQUI:** Substitua 'C:\Users\esdn6\Documents\data' pelo caminho EXATO da sua pasta de dados no Windows.
-      # Esta pasta será acessível como '/tf/data_project' dentro do container.
-      - /mnt/c/Users/esdn6/Documents/data:/tf/data_project 
-    # Define o diretório de trabalho inicial dentro do container para este serviço.
-    # O Jupyter Lab iniciará diretamente nesta pasta.
+      # Mapeia sua pasta de dados de entrada/saída no host para dentro do container.
+      - ./data:/tf/data_project
+      - /mnt/c/test_docker_mount:/tf/test_data
+    # Define o diretório de trabalho padrão dentro do container para este serviço.
+    # O VS Code abrirá este diretório.
     working_dir: /tf/TCC_GAN
-    # Comando que será executado quando o serviço 'jupyter_gan' for iniciado.
-    # Isso garante que o Jupyter Lab comece automaticamente quando o container for ligado.
-    command: jupyter lab --port=8888 --no-browser --allow-root --ip=0.0.0.0
+    # O comando que mantém o container ativo. O VS Code anexará a este shell.
+    #stdin_open: true
+    #tty: true
+    #command: bash
+    command: ["/bin/bash", "-c", "while true; do sleep infinity; done"]
+    # As linhas stdin_open e tty não são mais necessárias com o comando acima.
+    # Elas podem ser omitidas.

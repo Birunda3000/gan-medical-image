@@ -6,4 +6,15 @@ tqdm
 scikit-learn
 imageio
 tensorflow-docs
-imageio
+jupyterlab
+pylint
+black
+flake8
+debugpy
+isort
+autopep8
+yapf
+jupyter_client
+ipykernel
+ipywidgets
+nbformat

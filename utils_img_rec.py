@@ -3,9 +3,11 @@ import numpy as np
 import cv2
 import os
 import PIL
+import pathlib
 
 import tensorflow as tf
 import matplotlib.pyplot as plt
+from IPython.display import display, clear_output
 
 
 try:
@@ -205,7 +207,7 @@ def create_seed(num_examples_to_generate, noise_dim, num_classes):
     return seed, random_classes  # Retorna o tensor gerado e os rótulos para referência
 
 
-def generate_and_save_images(model, epoch, test_input, outpath):
+def generate_and_save_images(model, epoch, test_input, outpath, num_classes=10):
     """
     Generates and saves images produced by the model.
     Args:
@@ -224,17 +226,28 @@ def generate_and_save_images(model, epoch, test_input, outpath):
         plt.subplot(4, 4, i+1)
         plt.imshow(predictions[i, :, :, 0] * 127.5 + 127.5, cmap='gray')
         plt.axis('off')
-        plt.title(f'Classe {np.argmax(test_input[i][-10:])}', fontsize=6)
+        plt.title(f'Classe {np.argmax(test_input[i][-num_classes:])}', fontsize=6)
 
     # Ajusta o espaçamento entre os subplots
     plt.subplots_adjust(wspace=0.3, hspace=0.3)
 
+    outpath = pathlib.Path(outpath)
     plt.savefig(outpath / f'image_at_epoch_{epoch:04d}.png')
     plt.show()
-
-
-
 
 # Display a single image using the epoch number
 def display_image(epoch_no, out_path):
   return PIL.Image.open(out_path / f'image_at_epoch_{epoch_no:04d}.png')
+
+def plot_epoch_losses(current_epoch, g_loss_hist, d_loss_hist):
+    """Plota o histórico de perdas do Gerador e Discriminador."""
+    plt.figure(figsize=(10, 5)) # Ajuste o tamanho conforme preferir
+    plt.plot(g_loss_hist, 'b-', label=f'Perda Gerador (Atual): {g_loss_hist[-1]:.4f}')
+    plt.plot(d_loss_hist, 'r-', label=f'Perda Discriminador (Atual): {d_loss_hist[-1]:.4f}')
+    plt.title(f'Histórico de Perdas até Época {current_epoch}')
+    plt.xlabel('Época')
+    plt.ylabel('Perda')
+    plt.legend()
+    plt.grid(True)
+    display(plt.gcf()) # Exibe a figura diretamente no output da célula do notebook
+    plt.close()

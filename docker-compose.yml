@@ -2,7 +2,7 @@ version: '3.8' # Versão da sintaxe do Docker Compose. (Warning: Copilot note ab
 
 services:
   # Define o serviço principal do seu ambiente de desenvolvimento.
-  jupyter_gan:
+  vs_code_gan_dev:
     # Constrói a imagem Docker a partir do Dockerfile localizado no diretório atual.
     build: .
     # Nome amigável para o container. Facilita o gerenciamento via 'docker ps'.
@@ -25,7 +25,6 @@ services:
       - .:/tf/TCC_GAN
       # Mapeia sua pasta de dados de entrada/saída no host para dentro do container.
       - ./data:/tf/data_project
-      - /mnt/c/test_docker_mount:/tf/test_data
     # Define o diretório de trabalho padrão dentro do container para este serviço.
     # O VS Code abrirá este diretório.
     working_dir: /tf/TCC_GAN

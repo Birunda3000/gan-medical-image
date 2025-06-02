@@ -1,183 +1,104 @@
 import tensorflow as tf
 from tensorflow.keras import layers
 
-'''
-def make_discriminator_model(num_of_labels=10):
-    # Input para a imagem
-    image_input = layers.Input(shape=(28, 28, 1), name="image_input")
-    # Input para o vetor one-hot com num_of_labels classes
-    label_input = layers.Input(shape=(num_of_labels,), name="label_input")
 
-    # Processamento da imagem via convoluções
-    x = layers.Conv2D(32, (5, 5), strides=(2, 2), padding='same')(image_input)
-    x = layers.LeakyReLU()(x)
-    x = layers.Dropout(0.1)(x)
+cross_entropy = tf.keras.losses.BinaryCrossentropy(from_logits=False)
+discriminator_optimizer = tf.keras.optimizers.Adam(beta_1=0.5, learning_rate=1e-5)
 
-    x = layers.Conv2D(32, (5, 5), strides=(2, 2), padding='same')(x)
-    x = layers.LeakyReLU()(x)
-    x = layers.Dropout(0.1)(x)
+def discriminator_loss(real_output, fake_output):
+    
+    real_smooth_labels = tf.ones_like(real_output) * 0.9  # Smoothing the labels for real images
+    real_loss = cross_entropy(real_smooth_labels, real_output)
+    #real_loss = cross_entropy(tf.ones_like(real_output), real_output)
 
-    x = layers.Flatten()(x)
-
-    # Parte densa do discriminador para extração de features
-    x = layers.Dense(128, activation='relu')(x)
-    x = layers.Dense(64, activation='relu')(x)
-    x = layers.Dense(32, activation='relu')(x)
-
-    features = layers.Dense(16, activation='tanh')(x)  # Vetor de features com dimensão 16    
-    features = layers.BatchNormalization()(features)
-
-    # Separar as features em dois grupos:
-    # - x_incond: características que não serão moduladas (primeiros 6 neurônios)
-    # - x_cond: características que serão combinadas com o rótulo (últimos 10 neurônios)
-    x_incond = layers.Lambda(lambda z: z[:, :6], name="x_incond")(features)
-    x_cond = layers.Lambda(lambda z: z[:, 6:], name="x_cond")(features)
-
-    # Cria um embedding para o rótulo, mapeando o vetor one-hot para dimensão 10
-    label_embedding = layers.Dense(10, activation='tanh', name="label_embedding")(label_input)
-
-    # Normaliza x_cond e label_embedding para que tenham norma 1 (similaridade cosseno)
-    normalize = lambda tensor: tf.math.l2_normalize(tensor, axis=1)
-    x_cond_normalized = layers.Lambda(normalize, name="x_cond_normalized")(x_cond)
-    label_embedding_normalized = layers.Lambda(normalize, name="label_embedding_normalized")(label_embedding)
-
-    # Calcula o produto escalar (similaridade cosseno) entre x_cond_normalized e label_embedding_normalized
-    dot_product = layers.Dot(axes=1, name="dot_product")([x_cond_normalized, label_embedding_normalized])
-    # Resultado: tensor com shape (batch_size, 1)
-
-    # Combina as features incondicionais, condicionais e o valor do produto escalar
-    concatenated = layers.Concatenate(name="concatenated_features")([x_incond, x_cond, dot_product])
-
-    # Parte densa final para a decisão
-    x = layers.BatchNormalization(name="batch_norm")(concatenated)
-    x = layers.Dense(4, activation='tanh', name="dense_final")(x)  # Valores entre -1 e 1
-    output = layers.Dense(1, activation='sigmoid', name="output")(x)  # Saída: probabilidade de real/falso
-
-    # Define o modelo com os dois inputs e uma saída
-    model = tf.keras.Model(inputs=[image_input, label_input], outputs=output)
-    return model
-'''
-
+    
+    fake_smooth_labels = tf.zeros_like(fake_output) 
+    fake_loss = cross_entropy(fake_smooth_labels, fake_output)
+    
+    total_loss = real_loss + fake_loss
+    return total_loss
 
 
 def make_discriminator_model(num_of_labels=10):
     # Input para a imagem
-    image_input = layers.Input(shape=(28, 28, 1), name="image_input")
-    # Input para o vetor one-hot com 2 classes
+    image_input = layers.Input(shape=(128, 128, 1), name="image_input")
+    # Input para o vetor one-hot com o número de classes (e.g., 2 para COVID/Normal)
     label_input = layers.Input(shape=(num_of_labels,), name="label_input")
 
-    # Processamento da imagem via convoluções
-    x = layers.Conv2D(32, (5, 5), strides=(2, 2), padding='same')(image_input)
-    x = layers.LeakyReLU()(x)
-    x = layers.Dropout(0.1)(x)
+    # --- Bloco Convolucional para Processamento da Imagem (Downsampling) ---
+    # Inicia com mais filtros e strides=(2,2) para reduzir a dimensão espacial mais rapidamente
+    # 128x128x1 -> 64x64x64
+    x = layers.Conv2D(64, (5, 5), strides=(2, 2), padding='same', use_bias=False)(image_input)
+    x = layers.BatchNormalization()(x) # Adicionar BatchNormalization
+    x = layers.LeakyReLU(alpha=0.2)(x) # Usar alpha para LeakyReLU
+    #x = layers.Dropout(0.3)(x) # Dropout para regularização [cite: 1]
 
-    x = layers.Conv2D(32, (5, 5), strides=(2, 2), padding='same')(x)
-    x = layers.LeakyReLU()(x)
-    x = layers.Dropout(0.1)(x)
-
-    x = layers.Flatten()(x)
-
-    # Parte densa do discriminador para extração de features
-    x = layers.Dense(128, activation='relu')(x)
-    x = layers.Dense(32, activation='relu')(x)
+    # 64x64x64 -> 32x32x128
+    x = layers.Conv2D(128, (5, 5), strides=(2, 2), padding='same', use_bias=False)(x)
     x = layers.BatchNormalization()(x)
-    features = layers.Dense(16, activation='tanh')(x)  # Vetor de features com dimensão 16
+    x = layers.LeakyReLU(alpha=0.2)(x)
+    x = layers.Dropout(0.2)(x)
 
-    # Separar as features em dois grupos:
-    # - x_incond: características que não serão moduladas (primeiros 8 neurônios)
-    # - x_cond: características que serão combinadas com o rótulo (últimos 8 neurônios)
-    x_incond = layers.Lambda(lambda z: z[:, :8])(features)
-    x_cond = layers.Lambda(lambda z: z[:, 8:])(features)
+    # 32x32x128 -> 16x16x256
+    x = layers.Conv2D(256, (5, 5), strides=(2, 2), padding='same', use_bias=False)(x)
+    x = layers.BatchNormalization()(x)
+    x = layers.LeakyReLU(alpha=0.2)(x)
+    x = layers.Dropout(0.2)(x)
 
-    # Cria um embedding para o rótulo, mapeando o vetor one-hot para dimensão 8
-    label_embedding = layers.Dense(8, activation='tanh')(label_input)
+    # 16x16x256 -> 8x8x512
+    x = layers.Conv2D(512, (5, 5), strides=(2, 2), padding='same', use_bias=False)(x)
+    x = layers.BatchNormalization()(x)
+    x = layers.LeakyReLU(alpha=0.2)(x)
+    x = layers.Dropout(0.2)(x)
+
+    # Opcional: Se as imagens ainda forem muito detalhadas ou complexas,
+    # pode adicionar mais uma camada convolucional para reduzir para 4x4
+    # 8x8x512 -> 4x4x1024 (se necessário)
+    # x = layers.Conv2D(1024, (5, 5), strides=(2, 2), padding='same', use_bias=False)(x)
+    # x = layers.BatchNormalization()(x)
+    # x = layers.LeakyReLU(alpha=0.2)(x)
+    # x = layers.Dropout(0.3)(x)
+
+
+    x = layers.Flatten()(x) # Acha um tensor unidimensional para as camadas densas
+
+    # --- Bloco Densa para Extração de Features e Condicionamento ---
+    # As camadas densas iniciais podem precisar de mais neurônios para processar features de 8x8x512
+    
+    #x = layers.Dense(1024, activation='relu')(x) # Aumentado significativamente
+    #x = layers.BatchNormalization()(x) # BN para estabilizar [cite: 1]
+    #x = layers.Dense(512, activation='relu')(x)
+    #x = layers.BatchNormalization()(x)
+
+    x = layers.Dense(128, activation='relu')(x) # Mais camadas para maior capacidade
+    x = layers.BatchNormalization()(x)
+    features = layers.Dense(num_of_labels * 2, activation='tanh')(x) # Ajustar dimensão do vetor de features
+
+    # Separar as features para condicionamento (ACGAN-like)
+    # A dimensão das features condicionais deve ser igual à dimensão do embedding do rótulo
+    # Exemplo: Se 'features' tem 20 neurônios, dividir em 10 incondicionais e 10 condicionais
+    x_incond = layers.Lambda(lambda z: z[:, :num_of_labels])(features) # Primeiros 'num_of_labels' neurônios
+    x_cond = layers.Lambda(lambda z: z[:, num_of_labels:])(features)   # Últimos 'num_of_labels' neurônios
+
+    # Cria um embedding para o rótulo, mapeando o vetor one-hot para a mesma dimensão de x_cond
+    label_embedding = layers.Dense(num_of_labels, activation='tanh')(label_input) # Dimensão do embedding deve casar com x_cond
 
     # Calcula o produto escalar entre as features condicionais e o embedding do rótulo
-    dot_product = layers.Dot(axes=1)([x_cond, label_embedding])
-    # O resultado tem dimensão (batch_size, 1)
+    dot_product = layers.Dot(axes=1)([x_cond, label_embedding]) # O resultado tem dimensão (batch_size, 1)
 
     # Combina as features incondicionais, condicionais e o valor do produto escalar
-    concatenated = layers.Concatenate()([x_incond, x_cond, dot_product])
+    concatenated = layers.Concatenate()([x_incond, dot_product]) # Removi x_cond da concatenação pois já foi usado no dot_product
 
-    # Parte densa final para a decisão
-    x = layers.Dense(4, activation='tanh')(concatenated)  # Valores entre -1 e 1
-    output = layers.Dense(1, activation='sigmoid')(x)  # Saída: probabilidade de real/falso
+    # Parte densa final para a decisão Real/Falso
+    # Adicionando mais camadas densas para a decisão final
+    x = layers.Dense(32, activation='relu')(concatenated) # Aumentar capacidade
+    x = layers.Dense(16, activation='relu')(x)
+    # A última camada densa do discriminador (antes do sigmoid) deve ter saída 'from_logits=True' na loss
+    # ou uma ativação linear, e o sigmoid é aplicado na loss. No entanto, se o sigmoid está aqui, a loss não deve usar from_logits=True
+    # Para consistência com DCGAN, muitas vezes a última camada não tem ativação, e o sigmoid é na loss.
+    # Mas com o sigmoid aqui, a loss deve ser tf.keras.losses.BinaryCrossentropy(from_logits=False)
+    output = layers.Dense(1, activation='sigmoid')(x)
 
-    # Define o modelo com os dois inputs e uma saída
+    # Define o modelo com os dois inputs (imagem e label) e uma saída (real/falso)
     model = tf.keras.Model(inputs=[image_input, label_input], outputs=output)
     return model
-
-
-
-
-
-#-------------------------------------------------------------------------------------------------------------
-
-'''def make_discriminator_model():
-    model = tf.keras.Sequential()
-    model.add(layers.Conv2D(128, (5, 5), strides=(2, 2), padding='same',
-                                     input_shape=[28, 28, 1]))
-    model.add(layers.LeakyReLU())
-    model.add(layers.Dropout(0.3))
-
-    model.add(layers.Conv2D(128, (5, 5), strides=(2, 2), padding='same'))
-    model.add(layers.LeakyReLU())
-    model.add(layers.Dropout(0.3))
-
-    model.add(layers.Flatten())
-    model.add(layers.Dense(16))
-    model.add(layers.Dense(4))
-    model.add(layers.Dense(1))#isso vai pra dois---------------------------------
-
-    return model'''
-
-
-'''def make_discriminator_model():
-    # Input para a imagem
-    image_input = layers.Input(shape=(28, 28, 1), name="image_input")
-    # Input para o vetor one-hot com 2 classes
-    label_input = layers.Input(shape=(2,), name="label_input")
-
-    # Processamento da imagem via convoluções
-    x = layers.Conv2D(32, (5, 5), strides=(2, 2), padding='same')(image_input)
-    x = layers.LeakyReLU()(x)
-    x = layers.Dropout(0.1)(x)
-
-    x = layers.Conv2D(32, (5, 5), strides=(2, 2), padding='same')(x)
-    x = layers.LeakyReLU()(x)
-    x = layers.Dropout(0.1)(x)
-
-    x = layers.Flatten()(x)
-
-    # Concatena as features extraídas com o vetor one-hot
-
-    # Parte densa do discriminador
-
-    x = layers.Dense(128, activation='relu')(x)
-    x = layers.Dense(32, activation='relu')(x)
-    x = layers.BatchNormalization()(x)
-
-    x = layers.Dense(16, activation='relu')(x)
-
-
-
-    # adicionado para produto escalar
-    # Cria um embedding linear para o rótulo, mapeando o vetor one-hot para dimensão 16
-    label_embedding = layers.Dense(16, activation='linear')(label_input)
-    # Calcula o produto escalar (dot product) entre as features e o embedding do rótulo
-    dot_product = layers.Dot(axes=1)([x, label_embedding])
-    # O dot_product tem forma (batch_size, 1)
-
-    # Concatena as features com o valor do produto escalar para incorporar a interação
-    x = layers.Concatenate()([x, dot_product])
-    # adicionado para produto escalar
-
-
-    #x = layers.Concatenate()([x, label_input])
-    x = layers.Dense(8, activation='relu')(x)
-    x = layers.Dense(4, activation='tanh')(x)  # Mudança na ativação para valores entre -1 e 1
-    output = layers.Dense(1, activation='sigmoid')(x)  # Saída com ativação sigmoid para classificação binária
-
-    # Define o modelo com dois inputs e uma saída
-    model = tf.keras.Model(inputs=[image_input, label_input], outputs=output)
-    return model'''

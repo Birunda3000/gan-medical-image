@@ -1,7 +1,7 @@
 {
     "name": "TCC GAN Development Environment", // Nome que aparecerá no VS Code
     "dockerComposeFile": "../docker-compose.yml", // Caminho do seu docker-compose.yml em relação à pasta .devcontainer
-    "service": "jupyter_gan", // O nome do serviço que você definiu no docker-compose.yml (jupyter_gan)
+    "service": "vs_code_gan_dev", // O nome do serviço que você definiu no docker-compose.yml (jupyter_gan)
     "workspaceFolder": "/tf/TCC_GAN", // O diretório que o VS Code vai abrir dentro do container
     "shutdownAction": "stopCompose", // O que fazer ao fechar o VS Code (parar o serviço Docker Compose)
     "remoteUser": "root", // O usuário padrão dentro do container (geralmente 'root' para imagens da NVIDIA)

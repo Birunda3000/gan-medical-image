@@ -25,53 +25,37 @@ def make_discriminator_model(num_of_labels=10):
     # Input para o vetor one-hot com o número de classes (e.g., 2 para COVID/Normal)
     label_input = layers.Input(shape=(num_of_labels,), name="label_input")
 
-    # --- Bloco Convolucional para Processamento da Imagem (Downsampling) ---
-    # Inicia com mais filtros e strides=(2,2) para reduzir a dimensão espacial mais rapidamente
-    # 128x128x1 -> 64x64x64
     x = layers.Conv2D(64, (5, 5), strides=(2, 2), padding='same', use_bias=False)(image_input)
     x = layers.BatchNormalization()(x) # Adicionar BatchNormalization
     x = layers.LeakyReLU(alpha=0.2)(x) # Usar alpha para LeakyReLU
-    #x = layers.Dropout(0.3)(x) # Dropout para regularização [cite: 1]
 
-    # 64x64x64 -> 32x32x128
+    x = layers.Conv2D(64, (5, 5), strides=(2, 2), padding='same', use_bias=False)(x)
+    x = layers.BatchNormalization()(x)
+    x = layers.LeakyReLU(alpha=0.2)(x)
+    x = layers.Dropout(0.2)(x)
+
     x = layers.Conv2D(128, (5, 5), strides=(2, 2), padding='same', use_bias=False)(x)
     x = layers.BatchNormalization()(x)
     x = layers.LeakyReLU(alpha=0.2)(x)
     x = layers.Dropout(0.2)(x)
 
-    # 32x32x128 -> 16x16x256
     x = layers.Conv2D(256, (5, 5), strides=(2, 2), padding='same', use_bias=False)(x)
     x = layers.BatchNormalization()(x)
     x = layers.LeakyReLU(alpha=0.2)(x)
     x = layers.Dropout(0.2)(x)
 
-    # 16x16x256 -> 8x8x512
-    x = layers.Conv2D(512, (5, 5), strides=(2, 2), padding='same', use_bias=False)(x)
-    x = layers.BatchNormalization()(x)
-    x = layers.LeakyReLU(alpha=0.2)(x)
-    x = layers.Dropout(0.2)(x)
-
-    # Opcional: Se as imagens ainda forem muito detalhadas ou complexas,
-    # pode adicionar mais uma camada convolucional para reduzir para 4x4
-    # 8x8x512 -> 4x4x1024 (se necessário)
-    # x = layers.Conv2D(1024, (5, 5), strides=(2, 2), padding='same', use_bias=False)(x)
-    # x = layers.BatchNormalization()(x)
-    # x = layers.LeakyReLU(alpha=0.2)(x)
-    # x = layers.Dropout(0.3)(x)
-
-
     x = layers.Flatten()(x) # Acha um tensor unidimensional para as camadas densas
 
-    # --- Bloco Densa para Extração de Features e Condicionamento ---
-    # As camadas densas iniciais podem precisar de mais neurônios para processar features de 8x8x512
-    
-    #x = layers.Dense(1024, activation='relu')(x) # Aumentado significativamente
-    #x = layers.BatchNormalization()(x) # BN para estabilizar [cite: 1]
-    #x = layers.Dense(512, activation='relu')(x)
-    #x = layers.BatchNormalization()(x)
-
-    x = layers.Dense(128, activation='relu')(x) # Mais camadas para maior capacidade
+    x = layers.Dense(256, activation='relu')(x) # Mais camadas para maior capacidade
     x = layers.BatchNormalization()(x)
+
+    x = layers.Dense(128, activation='relu')(x)
+    x = layers.BatchNormalization()(x)
+    x = layers.Dropout(0.2)(x) # Dropout para evitar overfitting
+
+    x = layers.Dense(64, activation='relu')(x)
+    x = layers.BatchNormalization()(x)
+
     features = layers.Dense(num_of_labels * 2, activation='tanh')(x) # Ajustar dimensão do vetor de features
 
     # Separar as features para condicionamento (ACGAN-like)

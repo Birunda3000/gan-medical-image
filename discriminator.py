@@ -18,37 +18,37 @@ def discriminator_loss(real_output, fake_output):
     return total_loss
 
 
-def make_discriminator_model(num_of_labels=10, input_shape=(28, 28, 1)):
+def make_discriminator_model(num_of_labels=4, input_shape=(128, 128, 1)): # Defaults ajustados para o contexto
     # Input para a imagem
-    image_input = layers.Input(shape=input_shape, name="image_input") # Usa input_shape
+    image_input = layers.Input(shape=input_shape, name="image_input")
     # Input para o vetor one-hot com o número de classes
-    label_input = layers.Input(shape=(num_of_labels,), name="label_input") # Usa num_of_labels
+    label_input = layers.Input(shape=(num_of_labels,), name="label_input")
 
-    # Para input_shape=(28,28,1):
-    # Conv1: (28,28,1) -> (14,14,64)
+    # Sequência de camadas convolucionais para input_shape=(128,128,1):
+    # Conv1: (128,128,1) -> (64,64,64)
     x = layers.Conv2D(64, (5, 5), strides=(2, 2), padding='same', use_bias=False)(image_input)
     x = layers.BatchNormalization()(x)
     x = layers.LeakyReLU(alpha=0.2)(x)
 
-    # Conv2: (14,14,64) -> (7,7,64) (Original tinha 64 filtros, comum aumentar para 128 aqui)
-    x = layers.Conv2D(64, (5, 5), strides=(2, 2), padding='same', use_bias=False)(x) # Mantido como no original, mas poderia ser 128
+    # Conv2: (64,64,64) -> (32,32,64)
+    x = layers.Conv2D(64, (5, 5), strides=(2, 2), padding='same', use_bias=False)(x)
     x = layers.BatchNormalization()(x)
     x = layers.LeakyReLU(alpha=0.2)(x)
     x = layers.Dropout(0.2)(x)
 
-    # Conv3: (7,7,64) -> (4,4,128) (Considerando padding='same', 7/2 ~ 4)
+    # Conv3: (32,32,64) -> (16,16,128)
     x = layers.Conv2D(128, (5, 5), strides=(2, 2), padding='same', use_bias=False)(x)
     x = layers.BatchNormalization()(x)
     x = layers.LeakyReLU(alpha=0.2)(x)
     x = layers.Dropout(0.2)(x)
 
-    # Conv4: (4,4,128) -> (2,2,256) (Considerando padding='same', 4/2 = 2)
+    # Conv4: (16,16,128) -> (8,8,256)
     x = layers.Conv2D(256, (5, 5), strides=(2, 2), padding='same', use_bias=False)(x)
     x = layers.BatchNormalization()(x)
     x = layers.LeakyReLU(alpha=0.2)(x)
     x = layers.Dropout(0.2)(x)
 
-    x = layers.Flatten()(x)
+    x = layers.Flatten()(x) # Output: 8*8*256 = 16384
 
     x = layers.Dense(256, activation='relu')(x)
     x = layers.BatchNormalization()(x)
@@ -71,7 +71,7 @@ def make_discriminator_model(num_of_labels=10, input_shape=(28, 28, 1)):
 
     x = layers.Dense(32, activation='relu')(concatenated)
     x = layers.Dense(16, activation='relu')(x)
-    output = layers.Dense(1, activation='sigmoid')(x) # Sigmoid aqui, então from_logits=False na loss está correto
+    output = layers.Dense(1, activation='sigmoid')(x)
 
     model = tf.keras.Model(inputs=[image_input, label_input], outputs=output)
     return model

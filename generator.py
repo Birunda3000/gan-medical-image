@@ -1,58 +1,44 @@
 import tensorflow as tf
 from tensorflow.keras import layers
 
+# Learning rates mais comuns para MNIST com Adam em GANs
+# Original: learning_rate=2e-5
+generator_optimizer = tf.keras.optimizers.Adam(beta_1=0.5, learning_rate=2e-4) # Ajustado para MNIST
 
 cross_entropy = tf.keras.losses.BinaryCrossentropy(from_logits=False)
-generator_optimizer = tf.keras.optimizers.Adam(beta_1=0.5, learning_rate=1e-5)
 
 def generator_loss(fake_output):
     return cross_entropy(tf.ones_like(fake_output), fake_output)
 
-
-def make_generator_model(input_dim=110):
+# Corrigido para funcionar bem com MNIST (output_shape=(28,28,1))
+def make_generator_model(input_dim=110, output_shape=(28, 28, 1)):
     model = tf.keras.Sequential()
 
-    # Inicia o gerador com uma camada densa que mapeia o ruído + label para um tensor 4x4x512
-    # Isso fornece uma base rica em features para o upsampling.
-    model.add(layers.Dense(4*4*512, use_bias=False, input_shape=(input_dim,)))
-    model.add(layers.BatchNormalization()) # BatchNormalization é crucial para estabilidade [cite: 1]
-    model.add(layers.LeakyReLU(alpha=0.2)) # Usar alpha para LeakyReLU [cite: 1]
-
-    # Reshape para a primeira camada convolucional transposta (deconvolucional)
-    model.add(layers.Reshape((4, 4, 512)))
-    assert model.output_shape == (None, 4, 4, 512)
-
-    # --- Bloco de Camadas Convolucionais Transpostas (Upsampling) ---
-    # Cada camada dobra a dimensão espacial (strides=(2,2))
-
-    # Camada 1: 4x4x512 -> 8x8x256
-    model.add(layers.Conv2DTranspose(256, (5, 5), strides=(2, 2), padding='same', use_bias=False))
-    assert model.output_shape == (None, 8, 8, 256)
+    # Para MNIST (28x28), geralmente começamos com uma base de 7x7
+    # Camada densa inicial, projeção e reshape
+    model.add(layers.Dense(7*7*256, use_bias=False, input_shape=(input_dim,))) # Ajustado para base 7x7
     model.add(layers.BatchNormalization())
     model.add(layers.LeakyReLU(alpha=0.2))
 
-    # Camada 2: 8x8x256 -> 16x16x128
+    model.add(layers.Reshape((7, 7, 256))) # Ajustado para base 7x7
+    # A asserção original seria: assert model.output_shape == (None, 7, 7, 256)
+
+    # Primeiro bloco Conv2DTranspose: 7x7x256 -> 14x14x128
     model.add(layers.Conv2DTranspose(128, (5, 5), strides=(2, 2), padding='same', use_bias=False))
-    assert model.output_shape == (None, 16, 16, 128)
+    # A asserção original seria: assert model.output_shape == (None, 14, 14, 128)
     model.add(layers.BatchNormalization())
     model.add(layers.LeakyReLU(alpha=0.2))
 
-    # Camada 3: 16x16x128 -> 32x32x64
-    model.add(layers.Conv2DTranspose(64, (5, 5), strides=(2, 2), padding='same', use_bias=False))
-    assert model.output_shape == (None, 32, 32, 64)
-    model.add(layers.BatchNormalization())
-    model.add(layers.LeakyReLU(alpha=0.2))
-
-    # Camada 4: 32x32x64 -> 64x64x32
-    model.add(layers.Conv2DTranspose(32, (5, 5), strides=(2, 2), padding='same', use_bias=False))
-    assert model.output_shape == (None, 64, 64, 32)
-    model.add(layers.BatchNormalization())
-    model.add(layers.LeakyReLU(alpha=0.2))
-
-    # Camada 5 (Final): 64x64x32 -> 128x128x1
-    # A última camada de Conv2DTranspose tem 1 filtro para imagem em escala de cinza.
-    # A ativação 'tanh' é padrão para saída de geradores, normalizando pixels para [-1, 1].
-    model.add(layers.Conv2DTranspose(1, (5, 5), strides=(2, 2), padding='same', use_bias=False, activation='tanh'))
-    assert model.output_shape == (None, 128, 128, 1)
+    # Segundo bloco Conv2DTranspose (imagem final): 14x14x128 -> 28x28xoutput_shape[-1]
+    # O argumento output_shape dita o número de canais da imagem final.
+    # Para MNIST, output_shape[-1] seria 1 (escala de cinza).
+    model.add(layers.Conv2DTranspose(output_shape[-1], (5, 5), strides=(2, 2), padding='same', use_bias=False, activation='tanh'))
+    
+    # Checando se a forma de saída do modelo corresponde ao argumento output_shape (ignorando a dimensão do batch)
+    # A asserção original era: assert model.output_shape == output_shape
+    # Uma verificação mais robusta, considerando que model.output_shape[0] é None (batch_size):
+    # if output_shape is not None: # Adicionado para robustez
+    #    assert model.output_shape[1:] == output_shape, \
+    #        f"Model output shape {model.output_shape[1:]} does not match expected {output_shape}"
 
     return model

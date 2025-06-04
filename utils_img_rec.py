@@ -234,6 +234,7 @@ def generate_and_save_images(model, epoch, test_input, outpath, num_classes=10):
     outpath = pathlib.Path(outpath)
     plt.savefig(outpath / f'image_at_epoch_{epoch:04d}.png')
     plt.show()
+    
 
 # Display a single image using the epoch number
 def display_image(epoch_no, out_path):

@@ -1,8 +1,14 @@
 import tensorflow as tf
 from tensorflow.keras import layers
 
+lr_schedule = tf.keras.optimizers.schedules.ExponentialDecay(
+    initial_learning_rate=2e-4,
+    decay_steps=50,
+    decay_rate=0.5,
+    staircase=True) 
+
 cross_entropy = tf.keras.losses.BinaryCrossentropy(from_logits=False)
-discriminator_optimizer = tf.keras.optimizers.Adam(beta_1=0.5, learning_rate=2e-4) # Ajustado para MNIST
+discriminator_optimizer = tf.keras.optimizers.Adam(beta_1=0.5, learning_rate=2e-4)
 
 def discriminator_loss(real_output, fake_output):
     real_smooth_labels = tf.ones_like(real_output) * 0.9  # Label smoothing para imagens reais
@@ -13,25 +19,6 @@ def discriminator_loss(real_output, fake_output):
     
     total_loss = real_loss + fake_loss
     return total_loss
-
-def lr_scheduler(epoch):
-    """
-    Função de agendamento de taxa de aprendizado.
-    Args:
-        epoch (int): Número da época atual.
-    Returns:
-        float: Taxa de aprendizado ajustada.
-    """
-    if epoch < 25:
-        return 1e-4
-    elif epoch < 50:
-        return 1e-4
-    elif epoch < 75:
-        return 3e-5
-    else:
-        return 1e-7
-
-
 
 
 def make_discriminator_model(num_of_labels=4, input_shape=(128, 128, 1)): # Defaults ajustados para o contexto

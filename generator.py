@@ -1,28 +1,17 @@
 import tensorflow as tf
 from tensorflow.keras import layers
 
-generator_optimizer = tf.keras.optimizers.Adam(beta_1=0.5, learning_rate=2e-4) # Ajustado para MNIST
+lr_schedule = tf.keras.optimizers.schedules.ExponentialDecay(
+    initial_learning_rate=2e-4,
+    decay_steps=50,
+    decay_rate=0.5,
+    staircase=True) 
+
+generator_optimizer = tf.keras.optimizers.Adam(beta_1=0.5, learning_rate=2e-4)
 cross_entropy = tf.keras.losses.BinaryCrossentropy(from_logits=False)
 
 def generator_loss(fake_output):
     return cross_entropy(tf.ones_like(fake_output), fake_output)
-
-def lr_scheduler(epoch):
-    """
-    Função de agendamento de taxa de aprendizado.
-    Args:
-        epoch (int): Número da época atual.
-    Returns:
-        float: Taxa de aprendizado ajustada.
-    """
-    if epoch < 25:
-        return 2e-4
-    elif epoch < 50:
-        return 2e-4
-    elif epoch < 75:
-        return 6e-5
-    else:
-        return 2e-7
 
 
 def make_generator_model(input_dim=110, output_shape=(128, 128, 1)): # Default para 128x128x1

@@ -1,20 +1,26 @@
+# === Núcleo de Análise e Machine Learning ===
 numpy
-matplotlib
+pandas
+scikit-learn
+tensorflow
+
+# === Processamento de Imagem e Visualização ===
 Pillow
 opencv-python
-tqdm
-scikit-learn
+matplotlib
+seaborn
 imageio
-tensorflow-docs
-jupyterlab
-pylint
+
+# === Qualidade de Código e Ferramentas de Desenvolvimento ===
+# Padrão da indústria para formatação
 black
+# Linter padrão e flexível
 flake8
-debugpy
-isort
-autopep8
-yapf
-jupyter_client
+# Para a barra de progresso
+tqdm
+# Para o script de diagnóstico do ambiente
+psutil
+
+# === Ambiente Jupyter (Opcional) ===
+jupyterlab
 ipykernel
-ipywidgets
-nbformat

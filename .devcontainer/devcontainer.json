@@ -1,16 +1,18 @@
 {
-    "name": "TCC GAN Development Environment", // Nome que aparecerá no VS Code
-    "dockerComposeFile": "../docker-compose.yml", // Caminho do seu docker-compose.yml em relação à pasta .devcontainer
-    "service": "vs_code_gan_dev", // O nome do serviço que você definiu no docker-compose.yml (jupyter_gan)
-    "workspaceFolder": "/tf/TCC_GAN", // O diretório que o VS Code vai abrir dentro do container
-    "shutdownAction": "stopCompose", // O que fazer ao fechar o VS Code (parar o serviço Docker Compose)
-    "remoteUser": "root", // O usuário padrão dentro do container (geralmente 'root' para imagens da NVIDIA)
-    // Opcional: Adicione configurações específicas do VS Code aqui se quiser que elas se apliquem apenas a este ambiente
+    "name": "GAN Development Environment",
+    "dockerComposeFile": "../docker-compose.yml",
+    "service": "gan_dev_env",
+    "workspaceFolder": "/tf/TCC_GAN",
+    "shutdownAction": "stopCompose",
+    "remoteUser": "root",
     "customizations": {
         "vscode": {
             "extensions": [
                 "ms-python.python", // Extensão Python da Microsoft (essencial para Python no VS Code)
-                "ms-toolsai.jupyter" // Extensão Jupyter da Microsoft (para notebooks .ipynb no VS Code)
+                "ms-toolsai.jupyter", // Extensão Jupyter da Microsoft (para notebooks .ipynb no VS Code)
+                "ms-python.black-formatter", // Extensão Black Formatter para formatação de código Python
+                "GitHub.copilot",
+                "GitHub.copilot-chat"
             ],
             "settings": {
                 "python.defaultInterpreterPath": "/usr/bin/python", // Caminho do interpretador Python dentro do container
@@ -20,7 +22,14 @@
                 "jupyter.interactiveWindowMode": "perFile", // Modo de janela interativa por arquivo
                 "jupyter.interactiveWindowShowCode": true, // Exibe o código na janela interativa
                 "jupyter.interactiveWindowShowVariableExplorer": true, // Exibe o explorador de variáveis na janela interativa
-                "jupyter.interactiveWindowShowDataExplorer": true // Exibe o explorador de dados na janela interativa
+                "jupyter.interactiveWindowShowDataExplorer": true, // Exibe o explorador de dados na janela interativa
+                "editor.formatOnSave": true, // Ativa a formatação sempre que o ficheiro for salvo
+                "[python]": {
+                    "editor.defaultFormatter": "ms-python.black-formatter"
+                }, // 2. Define o 'black' como o formatador padrão para ficheiros Python
+                "python.linting.enabled": true, // Habilita a verificação de erros e estilo de código Python
+                "python.linting.flake8Enabled": true, // Habilita o Flake8 como verificador de estilo de código
+                "python.linting.lintOnSave": true // Verifica erros e estilo de código ao salvar
             }
         }
     }

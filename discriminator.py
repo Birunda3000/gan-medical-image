@@ -3,7 +3,7 @@ from tensorflow.keras import layers
 
 lr_schedule = tf.keras.optimizers.schedules.ExponentialDecay(
     initial_learning_rate=2e-4,
-    decay_steps=50,
+    decay_steps=28,
     decay_rate=0.5,
     staircase=True) 
 

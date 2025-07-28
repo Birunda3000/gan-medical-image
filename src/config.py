@@ -20,13 +20,26 @@ class Debug:
     SUBSET_SIZE = 2000 # Usar apenas 2000 imagens para um teste rápido
 
 class Model:
-    """Parâmetros da arquitetura dos modelos."""
-    # O Gerador usa o espaço latente como entrada para criar imagens.
+    """Parâmetros da arquitetura e das imagens."""
+    # --- Parâmetros do Gerador ---
     LATENT_DIM = 100
-    # Parâmetros das imagens (saída do Gerador, entrada do Discriminador)
-    IMG_HEIGHT = 28
-    IMG_WIDTH = 28
-    CHANNELS = 1 # 1 para escala de cinza (MNIST), 3 para RGB
+
+    # --- Parâmetros das Imagens ---
+    # Defina um número (ex: 64) para redimensionar todas as imagens para 64x64.
+    # Defina como 'original' para manter o tamanho de cada imagem.
+    # AVISO: Usar 'original' com imagens de tamanhos diferentes requer BATCH_SIZE=1.
+    IMG_HEIGHT: Union[int, str] = "original"
+    IMG_WIDTH: Union[int, str] = "original"
+
+    # --- NOVO: Modo de Leitura de Cor ---
+    # 'auto':      Usa os canais nativos da imagem.
+    # 'grayscale': Força a conversão para 1 canal (escala de cinza).
+    # 'RGB':       Força a conversão para 3 canais (RGB).
+    COLOR_MODE: str = "grayscale" # Padrão para MNIST, mude para 'RGB' para imagens coloridas
+
+    # O número de canais será definido automaticamente com base no COLOR_MODE
+    # Não precisa de mudar esta linha.
+    CHANNELS = 1 if COLOR_MODE == 'grayscale' else 3 if COLOR_MODE == 'RGB' else 0
 
 class Training:
     """Hiperparâmetros para o processo de treino da GAN."""

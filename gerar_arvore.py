@@ -97,6 +97,7 @@ if __name__ == "__main__":
         'env', 
         'venv',
         'node_modules',
+        'data',
         # Adicione o nome do próprio script para não aparecer na árvore
         os.path.basename(__file__),
         NOME_DO_ARQUIVO_DE_SAIDA

@@ -5,6 +5,7 @@ Módulo para as arquiteturas da ACGAN (Auxiliary Classifier GAN).
 Define um Gerador que recebe o ruído e a classe, e um Discriminador
 com duas saídas: real/falso e classificação da classe.
 """
+from . import config
 import tensorflow as tf
 from tensorflow.keras import layers, Model
 from typing import Tuple

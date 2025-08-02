@@ -9,6 +9,7 @@ report.txt
 
 # Dados
 data/
+output/
 *.pickle
 
 # Python

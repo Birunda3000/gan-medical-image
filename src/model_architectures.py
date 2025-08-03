@@ -1,11 +1,15 @@
 # -*- coding: utf-8 -*-
 """
-Módulo para as arquiteturas da ACGAN (Auxiliary Classifier GAN).
+Módulo para as arquiteturas da ACGAN (Versão Final Corrigida)
 
-Define um Gerador que recebe o ruído e a classe, e um Discriminador
-com duas saídas: real/falso e classificação da classe.
+Garante que as dimensões dinâmicas ('original', 'auto') sejam
+traduzidas corretamente para o formato que o Keras entende (None).
 """
-from . import config
+# -*- coding: utf-8 -*-
+import tensorflow as tf
+from tensorflow.keras import layers, Model
+from typing import Tuple
+# -*- coding: utf-8 -*-
 import tensorflow as tf
 from tensorflow.keras import layers, Model
 from typing import Tuple
@@ -15,59 +19,43 @@ try:
 except ImportError:
     import config
 
-def build_generator(
-    latent_dim: int = config.Model.LATENT_DIM,
-    num_classes: int = config.NUM_CLASSES
-) -> Model:
-    """
-    Constrói o Gerador da ACGAN com duas entradas.
-    """
-    # Entrada 1: Vetor de ruído latente
+def build_generator(latent_dim: int = None, num_classes: int = None) -> Model:
+    # ... (esta função permanece igual, sem alterações)
+    if latent_dim is None: latent_dim = config.Model.LATENT_DIM
+    if num_classes is None: num_classes = config.NUM_CLASSES
     latent_input = layers.Input(shape=(latent_dim,), name="generator_latent_input")
-    
-    # Entrada 2: Rótulo da classe
     label_input = layers.Input(shape=(1,), name="generator_label_input")
-    
-    # Camada de Embedding para o rótulo
-    # Transforma o rótulo num vetor denso e o redimensiona
     label_embedding = layers.Embedding(num_classes, latent_dim)(label_input)
     label_embedding = layers.Dense(7 * 7)(label_embedding)
     label_embedding = layers.Reshape((7, 7, 1))(label_embedding)
-    
-    # Prepara o vetor de ruído
     noise = layers.Dense(7 * 7 * 255, use_bias=False)(latent_input)
     noise = layers.Reshape((7, 7, 255))(noise)
-    
-    # Concatena o ruído e o rótulo processado
     merged_input = layers.Concatenate()([noise, label_embedding])
-    
-    # Arquitetura de upsampling (igual à anterior)
     x = layers.Conv2DTranspose(128, (5, 5), strides=(2, 2), padding='same', use_bias=False)(merged_input)
     x = layers.BatchNormalization()(x)
     x = layers.LeakyReLU()(x)
-    
     x = layers.Conv2DTranspose(64, (5, 5), strides=(2, 2), padding='same', use_bias=False)(x)
     x = layers.BatchNormalization()(x)
     x = layers.LeakyReLU()(x)
-
-    final_channels = 1 if config.Model.COLOR_MODE == 'grayscale' else 3
+    final_channels = config.Model.CHANNELS if config.Model.COLOR_MODE != 'auto' else 3
     output_image = layers.Conv2DTranspose(final_channels, (5, 5), strides=(1, 1), padding='same', use_bias=False, activation='tanh')(x)
-
-    # Cria o modelo final com duas entradas e uma saída
     model = Model(inputs=[latent_input, label_input], outputs=output_image, name="generator")
     print("✅ Modelo Gerador (ACGAN) construído com sucesso.")
     return model
 
-def build_discriminator(
-    input_shape: Tuple[int, int, int] = (config.Model.IMG_HEIGHT, config.Model.IMG_WIDTH, config.Model.CHANNELS),
-    num_classes: int = config.NUM_CLASSES
-) -> Model:
-    """
-    Constrói o Discriminador da ACGAN com duas saídas.
-    """
+def build_discriminator(input_shape: Tuple[int, int, int] = None, num_classes: int = None) -> Model:
+    """Constrói o Discriminador da ACGAN com duas saídas."""
+    if input_shape is None:
+        img_height = None if config.Model.IMG_HEIGHT == 'original' else config.Model.IMG_HEIGHT
+        img_width = None if config.Model.IMG_WIDTH == 'original' else config.Model.IMG_WIDTH
+        channels = config.Model.CHANNELS
+        input_shape = (img_height, img_width, channels)
+        
+    if num_classes is None:
+        num_classes = config.NUM_CLASSES
+
     image_input = layers.Input(shape=input_shape, name="discriminator_image_input")
     
-    # Corpo principal do discriminador (igual ao anterior)
     x = layers.Conv2D(64, (5, 5), strides=(2, 2), padding='same')(image_input)
     x = layers.LeakyReLU()(x)
     x = layers.Dropout(0.3)(x)
@@ -75,24 +63,15 @@ def build_discriminator(
     x = layers.Conv2D(128, (5, 5), strides=(2, 2), padding='same')(x)
     x = layers.LeakyReLU()(x)
     x = layers.Dropout(0.3)(x)
+
+    # Substituí a camada Flatten por GlobalAveragePooling2D.
+    # Isto cria uma saída de tamanho fixo, independentemente do tamanho da imagem de entrada.
+    x = layers.GlobalAveragePooling2D()(x)
     
-    x = layers.Flatten()(x)
-    
-    # "Cabeça" de Saída 1: Fonte (Real ou Falso)
+    # Agora a camada Dense recebe uma entrada de tamanho fixo e bem definido.
     source_output = layers.Dense(1, activation='sigmoid', name='source_output')(x)
-    
-    # "Cabeça" de Saída 2: Classe da Imagem
     class_output = layers.Dense(num_classes, activation='softmax', name='class_output')(x)
     
-    # Cria o modelo final com uma entrada e duas saídas
     model = Model(inputs=image_input, outputs=[source_output, class_output], name="discriminator")
     print("✅ Modelo Discriminador (ACGAN) construído com sucesso.")
     return model
-
-if __name__ == '__main__':
-    print("--- A testar a construção dos modelos ACGAN ---")
-    generator = build_generator()
-    generator.summary()
-    print("\n" + "="*50 + "\n")
-    discriminator = build_discriminator()
-    discriminator.summary()

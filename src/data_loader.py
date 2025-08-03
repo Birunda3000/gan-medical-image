@@ -60,7 +60,6 @@ def create_acgan_dataset(data_path: Path, batch_size: int) -> Tuple[Dataset, int
         img_raw = tf.io.read_file(path)
         
         if config.Model.COLOR_MODE != 'auto':
-            # --- CORREÇÃO ESTÁ AQUI ---
             img_decoded_for_shape = tf.image.decode_image(img_raw, expand_animations=False)
             shape_tensor = tf.shape(img_decoded_for_shape)
             

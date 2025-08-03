@@ -4,71 +4,67 @@
 [ETAPA 1/3] Carregando dataset...
 A carregar imagens de: /tf/TCC_GAN/data/mnist/train com COLOR_MODE='grayscale'
 A procurar por imagens em: /tf/TCC_GAN/data/mnist/train
-Modo Debug: A usar um subconjunto de 2000 imagens no total.
-Encontradas 2000 imagens em 10 classes.
+Modo Debug: A usar um subconjunto de 200 imagens no total.
+Encontradas 200 imagens em 10 classes.
 Pipeline de dados avançado para a ACGAN criado com sucesso!
 
 [ETAPA 2/3] Iniciando o loop de treino...
-Época 1/50 | Perda Gerador: 3.0768 | Perda Discriminador: 3.3385 | Tempo: 9.73 sec
-Época 2/50 | Perda Gerador: 3.3521 | Perda Discriminador: 2.7424 | Tempo: 2.14 sec
-Época 3/50 | Perda Gerador: 3.4105 | Perda Discriminador: 2.3730 | Tempo: 0.83 sec
-Época 4/50 | Perda Gerador: 3.4115 | Perda Discriminador: 2.7426 | Tempo: 0.24 sec
-Época 5/50 | Perda Gerador: 3.6200 | Perda Discriminador: 2.2244 | Tempo: 0.23 sec
-✅ Modelo do gerador salvo em: /tf/TCC_GAN/output/_tmp_mnist_ACGAN_2025-08-02_23h14m15s/models/generator.keras
-Época 6/50 | Perda Gerador: 3.0932 | Perda Discriminador: 2.3016 | Tempo: 0.25 sec
-Época 7/50 | Perda Gerador: 2.8999 | Perda Discriminador: 2.2254 | Tempo: 0.24 sec
-Época 8/50 | Perda Gerador: 2.6498 | Perda Discriminador: 2.3391 | Tempo: 0.24 sec
-Época 9/50 | Perda Gerador: 1.9844 | Perda Discriminador: 2.3436 | Tempo: 0.24 sec
-Época 10/50 | Perda Gerador: 1.3929 | Perda Discriminador: 2.1275 | Tempo: 0.24 sec
-✅ Modelo do gerador salvo em: /tf/TCC_GAN/output/_tmp_mnist_ACGAN_2025-08-02_23h14m15s/models/generator.keras
-Época 11/50 | Perda Gerador: 1.0717 | Perda Discriminador: 2.0919 | Tempo: 0.24 sec
-Época 12/50 | Perda Gerador: 0.9016 | Perda Discriminador: 2.0407 | Tempo: 0.24 sec
-Época 13/50 | Perda Gerador: 0.8566 | Perda Discriminador: 1.9779 | Tempo: 0.23 sec
-Época 14/50 | Perda Gerador: 0.8576 | Perda Discriminador: 1.8841 | Tempo: 0.25 sec
-Época 15/50 | Perda Gerador: 0.8448 | Perda Discriminador: 1.8514 | Tempo: 0.27 sec
-✅ Modelo do gerador salvo em: /tf/TCC_GAN/output/_tmp_mnist_ACGAN_2025-08-02_23h14m15s/models/generator.keras
-Época 16/50 | Perda Gerador: 0.8678 | Perda Discriminador: 1.8006 | Tempo: 0.27 sec
-Época 17/50 | Perda Gerador: 0.8405 | Perda Discriminador: 1.8082 | Tempo: 0.24 sec
-Época 18/50 | Perda Gerador: 0.8596 | Perda Discriminador: 1.7825 | Tempo: 0.24 sec
-Época 19/50 | Perda Gerador: 0.8115 | Perda Discriminador: 1.7753 | Tempo: 0.24 sec
-Época 20/50 | Perda Gerador: 0.8429 | Perda Discriminador: 1.7584 | Tempo: 0.23 sec
-✅ Modelo do gerador salvo em: /tf/TCC_GAN/output/_tmp_mnist_ACGAN_2025-08-02_23h14m15s/models/generator.keras
-Época 21/50 | Perda Gerador: 0.8357 | Perda Discriminador: 1.7388 | Tempo: 0.24 sec
-Época 22/50 | Perda Gerador: 0.8540 | Perda Discriminador: 1.7288 | Tempo: 0.26 sec
-Época 23/50 | Perda Gerador: 0.8453 | Perda Discriminador: 1.7682 | Tempo: 0.25 sec
-Época 24/50 | Perda Gerador: 0.8345 | Perda Discriminador: 1.7747 | Tempo: 0.26 sec
-Época 25/50 | Perda Gerador: 0.8085 | Perda Discriminador: 1.7881 | Tempo: 0.27 sec
-✅ Modelo do gerador salvo em: /tf/TCC_GAN/output/_tmp_mnist_ACGAN_2025-08-02_23h14m15s/models/generator.keras
-Época 26/50 | Perda Gerador: 0.8153 | Perda Discriminador: 1.7283 | Tempo: 0.24 sec
-Época 27/50 | Perda Gerador: 0.7783 | Perda Discriminador: 1.7771 | Tempo: 0.27 sec
-Época 28/50 | Perda Gerador: 0.8224 | Perda Discriminador: 1.7281 | Tempo: 0.27 sec
-Época 29/50 | Perda Gerador: 0.7715 | Perda Discriminador: 1.7963 | Tempo: 0.27 sec
-Época 30/50 | Perda Gerador: 0.8065 | Perda Discriminador: 1.7085 | Tempo: 0.23 sec
-✅ Modelo do gerador salvo em: /tf/TCC_GAN/output/_tmp_mnist_ACGAN_2025-08-02_23h14m15s/models/generator.keras
-Época 31/50 | Perda Gerador: 0.7549 | Perda Discriminador: 1.7918 | Tempo: 0.27 sec
-Época 32/50 | Perda Gerador: 0.8259 | Perda Discriminador: 1.6500 | Tempo: 0.28 sec
-Época 33/50 | Perda Gerador: 0.7666 | Perda Discriminador: 1.7646 | Tempo: 0.27 sec
-Época 34/50 | Perda Gerador: 0.7974 | Perda Discriminador: 1.7250 | Tempo: 0.28 sec
-Época 35/50 | Perda Gerador: 0.8228 | Perda Discriminador: 1.6650 | Tempo: 0.31 sec
-✅ Modelo do gerador salvo em: /tf/TCC_GAN/output/_tmp_mnist_ACGAN_2025-08-02_23h14m15s/models/generator.keras
-Época 36/50 | Perda Gerador: 0.7563 | Perda Discriminador: 1.7727 | Tempo: 0.27 sec
-Época 37/50 | Perda Gerador: 0.8608 | Perda Discriminador: 1.5987 | Tempo: 0.29 sec
-Época 38/50 | Perda Gerador: 0.7571 | Perda Discriminador: 1.7804 | Tempo: 0.31 sec
-Época 39/50 | Perda Gerador: 0.8505 | Perda Discriminador: 1.6612 | Tempo: 0.29 sec
-Época 40/50 | Perda Gerador: 0.7942 | Perda Discriminador: 1.6671 | Tempo: 0.28 sec
-✅ Modelo do gerador salvo em: /tf/TCC_GAN/output/_tmp_mnist_ACGAN_2025-08-02_23h14m15s/models/generator.keras
-Época 41/50 | Perda Gerador: 0.7588 | Perda Discriminador: 1.7518 | Tempo: 0.28 sec
-Época 42/50 | Perda Gerador: 0.8461 | Perda Discriminador: 1.5850 | Tempo: 0.26 sec
-Época 43/50 | Perda Gerador: 0.7600 | Perda Discriminador: 1.7133 | Tempo: 0.28 sec
-Época 44/50 | Perda Gerador: 0.7850 | Perda Discriminador: 1.7046 | Tempo: 0.31 sec
-Época 45/50 | Perda Gerador: 0.8355 | Perda Discriminador: 1.5749 | Tempo: 0.31 sec
-✅ Modelo do gerador salvo em: /tf/TCC_GAN/output/_tmp_mnist_ACGAN_2025-08-02_23h14m15s/models/generator.keras
-Época 46/50 | Perda Gerador: 0.7779 | Perda Discriminador: 1.6903 | Tempo: 0.27 sec
-Época 47/50 | Perda Gerador: 0.8096 | Perda Discriminador: 1.6561 | Tempo: 0.24 sec
-Época 48/50 | Perda Gerador: 0.8301 | Perda Discriminador: 1.5782 | Tempo: 0.25 sec
-Época 49/50 | Perda Gerador: 0.7576 | Perda Discriminador: 1.7217 | Tempo: 0.24 sec
-Época 50/50 | Perda Gerador: 0.8042 | Perda Discriminador: 1.6309 | Tempo: 0.24 sec
-✅ Modelo do gerador salvo em: /tf/TCC_GAN/output/_tmp_mnist_ACGAN_2025-08-02_23h14m15s/models/generator.keras
+Época 1/50 | Perda Gerador: 2.9964 | Perda Discriminador: 3.7022 | Tempo: 4.98 sec
+Época 2/50 | Perda Gerador: 2.9950 | Perda Discriminador: 3.6328 | Tempo: 0.78 sec
+Época 3/50 | Perda Gerador: 3.0278 | Perda Discriminador: 3.5520 | Tempo: 0.46 sec
+Época 4/50 | Perda Gerador: 3.0284 | Perda Discriminador: 3.4992 | Tempo: 0.44 sec
+Época 5/50 | Perda Gerador: 2.9378 | Perda Discriminador: 3.5378 | Tempo: 0.31 sec
+Época 6/50 | Perda Gerador: 2.8436 | Perda Discriminador: 3.6295 | Tempo: 0.32 sec
+Época 7/50 | Perda Gerador: 2.8569 | Perda Discriminador: 3.5908 | Tempo: 0.32 sec
+Época 8/50 | Perda Gerador: 2.9004 | Perda Discriminador: 3.5212 | Tempo: 0.30 sec
+Época 9/50 | Perda Gerador: 2.8582 | Perda Discriminador: 3.5533 | Tempo: 0.24 sec
+Época 10/50 | Perda Gerador: 2.7746 | Perda Discriminador: 3.6709 | Tempo: 0.24 sec
+Época 11/50 | Perda Gerador: 2.7428 | Perda Discriminador: 3.7084 | Tempo: 0.24 sec
+Época 12/50 | Perda Gerador: 2.7990 | Perda Discriminador: 3.6036 | Tempo: 0.25 sec
+Época 13/50 | Perda Gerador: 2.8964 | Perda Discriminador: 3.4421 | Tempo: 0.10 sec
+Época 14/50 | Perda Gerador: 3.0371 | Perda Discriminador: 3.2924 | Tempo: 0.10 sec
+Época 15/50 | Perda Gerador: 3.1610 | Perda Discriminador: 3.1632 | Tempo: 0.03 sec
+Época 16/50 | Perda Gerador: 3.2780 | Perda Discriminador: 3.0802 | Tempo: 0.03 sec
+Época 17/50 | Perda Gerador: 3.1618 | Perda Discriminador: 3.1479 | Tempo: 0.03 sec
+Época 18/50 | Perda Gerador: 2.7033 | Perda Discriminador: 3.6829 | Tempo: 0.03 sec
+Época 19/50 | Perda Gerador: 2.5745 | Perda Discriminador: 4.0546 | Tempo: 0.03 sec
+Época 20/50 | Perda Gerador: 2.6153 | Perda Discriminador: 3.9923 | Tempo: 0.03 sec
+✅ Modelo do gerador salvo em: /tf/TCC_GAN/output/_tmp_mnist_ACGAN_2025-08-03_18h54m11s/models/generator.keras
+Época 21/50 | Perda Gerador: 2.6640 | Perda Discriminador: 3.8636 | Tempo: 0.03 sec
+Época 22/50 | Perda Gerador: 2.7360 | Perda Discriminador: 3.8178 | Tempo: 0.03 sec
+Época 23/50 | Perda Gerador: 2.7497 | Perda Discriminador: 3.8536 | Tempo: 0.03 sec
+Época 24/50 | Perda Gerador: 2.8135 | Perda Discriminador: 3.8534 | Tempo: 0.03 sec
+Época 25/50 | Perda Gerador: 2.8052 | Perda Discriminador: 3.8174 | Tempo: 0.03 sec
+Época 26/50 | Perda Gerador: 2.9176 | Perda Discriminador: 3.7681 | Tempo: 0.03 sec
+Época 27/50 | Perda Gerador: 2.9658 | Perda Discriminador: 3.6992 | Tempo: 0.03 sec
+Época 28/50 | Perda Gerador: 3.0196 | Perda Discriminador: 3.6346 | Tempo: 0.03 sec
+Época 29/50 | Perda Gerador: 3.0594 | Perda Discriminador: 3.6234 | Tempo: 0.03 sec
+Época 30/50 | Perda Gerador: 3.0128 | Perda Discriminador: 3.6980 | Tempo: 0.03 sec
+Época 31/50 | Perda Gerador: 2.9443 | Perda Discriminador: 3.7368 | Tempo: 0.02 sec
+Época 32/50 | Perda Gerador: 2.9862 | Perda Discriminador: 3.7323 | Tempo: 0.03 sec
+Época 33/50 | Perda Gerador: 3.0256 | Perda Discriminador: 3.7217 | Tempo: 0.03 sec
+Época 34/50 | Perda Gerador: 3.0772 | Perda Discriminador: 3.7075 | Tempo: 0.03 sec
+Época 35/50 | Perda Gerador: 3.1151 | Perda Discriminador: 3.6855 | Tempo: 0.03 sec
+Época 36/50 | Perda Gerador: 3.0786 | Perda Discriminador: 3.6798 | Tempo: 0.03 sec
+Época 37/50 | Perda Gerador: 3.0942 | Perda Discriminador: 3.6772 | Tempo: 0.03 sec
+Época 38/50 | Perda Gerador: 3.1168 | Perda Discriminador: 3.6700 | Tempo: 0.03 sec
+Época 39/50 | Perda Gerador: 3.1432 | Perda Discriminador: 3.6684 | Tempo: 0.03 sec
+Época 40/50 | Perda Gerador: 3.1849 | Perda Discriminador: 3.6630 | Tempo: 0.03 sec
+✅ Modelo do gerador salvo em: /tf/TCC_GAN/output/_tmp_mnist_ACGAN_2025-08-03_18h54m11s/models/generator.keras
+Época 41/50 | Perda Gerador: 3.1598 | Perda Discriminador: 3.6550 | Tempo: 0.03 sec
+Época 42/50 | Perda Gerador: 3.1804 | Perda Discriminador: 3.6479 | Tempo: 0.03 sec
+Época 43/50 | Perda Gerador: 3.1840 | Perda Discriminador: 3.6423 | Tempo: 0.03 sec
+Época 44/50 | Perda Gerador: 3.1703 | Perda Discriminador: 3.6342 | Tempo: 0.03 sec
+Época 45/50 | Perda Gerador: 3.1732 | Perda Discriminador: 3.6304 | Tempo: 0.03 sec
+Época 46/50 | Perda Gerador: 3.1650 | Perda Discriminador: 3.6214 | Tempo: 0.03 sec
+Época 47/50 | Perda Gerador: 3.1523 | Perda Discriminador: 3.6133 | Tempo: 0.03 sec
+Época 48/50 | Perda Gerador: 3.1268 | Perda Discriminador: 3.6032 | Tempo: 0.03 sec
+Época 49/50 | Perda Gerador: 3.1560 | Perda Discriminador: 3.5815 | Tempo: 0.03 sec
+Época 50/50 | Perda Gerador: 3.1311 | Perda Discriminador: 3.5659 | Tempo: 0.03 sec
 
-[ETAPA 3/3] Treino concluído!
-✅ GIF de treino salvo em: /tf/TCC_GAN/output/_tmp_mnist_ACGAN_2025-08-02_23h14m15s/acgan.gif
+[ETAPA 3/3] Treino concluído! Finalizando a execução...
+✅ Diretório da execução finalizado e salvo como: mnist_ACGAN___g_loss=3.13_d_loss=3.57___2025-08-03_18h54m11s
+A criar o GIF de treino...
+✅ GIF de treino salvo em: /tf/TCC_GAN/output/mnist_ACGAN___g_loss=3.13_d_loss=3.57___2025-08-03_18h54m11s/acgan_training.gif
+Não foi possível salvar o gráfico do histórico de perdas: name 'plt' is not defined
+✅ Relatório da execução salvo em: /tf/TCC_GAN/output/mnist_ACGAN___g_loss=3.13_d_loss=3.57___2025-08-03_18h54m11s/report.txt
